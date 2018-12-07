@@ -44,7 +44,7 @@ public class Codi extends AppCompatActivity {
         EditText editTxt_AndroidId = (EditText) findViewById(R.id.editTxt_AndroidId);
         editTxt_AndroidId.setText(android_id);
 
-        String appId = "com.josejuanvazquez.infocodi";
+        String appId = "org.josejuanvazquez.codi";
         EditText editTxt_AppId = (EditText) findViewById(R.id.editTxt_AppId);
         editTxt_AppId.setText(appId);
 
@@ -164,7 +164,7 @@ public class Codi extends AppCompatActivity {
 
                 //Bytes 16 al 31  Arreglo de 16 bytes como vector de inicialización para el modo
                 byte[] vectorInicialización = new byte[16];
-                System.arraycopy(keySource, 16, vectorInicialización, 0, 16);
+                System.arraycopy(keySource, 15, vectorInicialización, 0, 16);
 
                 String cGoogleID = ((EditText) findViewById(R.id.editTxt_IdGoogle_Firebase)).getText().toString(); //id encriptado de Google enviado por Banxico
 
@@ -173,6 +173,7 @@ public class Codi extends AppCompatActivity {
                 String cGoogleIdDesencriptado = null;
                 try {
                     AES_CBC_128 aes_cbc_128 = new AES_CBC_128();
+//Inicio de Ejemplo
 /*
                     String llave = "92AE31A79FEEB2A3"; //llave
                     String iv = "0123456789ABCDEF"; // vector de inicialización
@@ -187,12 +188,16 @@ public class Codi extends AppCompatActivity {
                     byte[] ivArray = iv.getBytes();
                     Log.i(this.getClass().getName(), "ivArray length: "+ ivArray.length);
 
-                    String desencriptado = aes_cbc_128.decrypt(llaveArray,ivArray,encriptado );
 
+                    String desencriptado = aes_cbc_128.decrypt(llaveArray,ivArray,encriptado );
 
                     Log.i(this.getClass().getName(), "desencriptado: "+ desencriptado);
 */
+//Fin de Ejemplo
+
+//Solicitud de desencripcion
                     cGoogleIdDesencriptado = aes_cbc_128.decrypt(key, vectorInicialización, cGoogleID);
+                    Log.i(this.getClass().getName(), "cGoogleIdDesencriptado: "+ cGoogleIdDesencriptado);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

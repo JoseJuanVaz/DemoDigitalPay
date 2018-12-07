@@ -54,7 +54,7 @@ public class AES_CBC_128 {
         Cipher cipher = Cipher.getInstance(cI);
         cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
 
-        byte[] enc = encrypted.getBytes();
+        byte[] enc = decodeBase64(encrypted);//encrypted.getBytes();
         Log.i(this.getClass().getName(), "enc: "+ enc.length);
         //Notas
         // Usando encrypted.getBytes() se genera cadena de 32 bytes, decir,
