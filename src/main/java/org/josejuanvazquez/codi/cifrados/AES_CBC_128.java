@@ -45,16 +45,26 @@ public class AES_CBC_128 {
      * @throws Exception puede devolver excepciones de los siguientes tipos: NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException
      */
     public String decrypt(byte[]  key, byte[]  iv, String encrypted) throws Exception {
-        Cipher cipher = Cipher.getInstance(cI);
-        SecretKeySpec skeySpec = new SecretKeySpec(key, alg);
+        Log.i(this.getClass().getName(), "Desencriptar: "+ encrypted);
+        Log.i(this.getClass().getName(), "Desencriptar bytes: "+ encrypted.getBytes());
+        Log.i(this.getClass().getName(), "Desencriptar bytes: "+ decodeBase64(encrypted));
 
+        SecretKeySpec skeySpec = new SecretKeySpec(key, alg);
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-        Log.i(this.getClass().getName(), "Valor Encriptado: "+ encrypted);
+        Cipher cipher = Cipher.getInstance(cI);
+        cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
 
         byte[] enc = encrypted.getBytes();
         Log.i(this.getClass().getName(), "enc: "+ enc.length);
+        //Notas
+        // Usando encrypted.getBytes() se genera cadena de 32 bytes, decir,
+        // como estamos usando 16 bytes de Llave y 16 Bytes de Vector de inicializacion
+        // cadena a 32 bytes envia error: javax.crypto.BadPaddingException: error:1e000065:Cipher functions:OPENSSL_internal:BAD_DECRYPT
+        // Aunque este error indica que esta mal la llave para desencriptar.
+        //
+        //Usando decodeBase64(encrypted); se genera cadena de 24 bytes
+        //Lo cual parece estar mal para este tipo de desencripcion porque envia el error javax.crypto.IllegalBlockSizeException: error:1e00007b:Cipher functions:OPENSSL_internal:WRONG_FINAL_BLOCK_LENGTH
 
-        cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
 
         byte[] decrypted = cipher.doFinal(enc);
         return new String(decrypted);

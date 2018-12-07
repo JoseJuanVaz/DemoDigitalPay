@@ -90,62 +90,73 @@ public class Codi extends AppCompatActivity {
         //Proceso de Generacion de KeySource
         Button btnGeneracionKeySource = (Button) findViewById(R.id.bttn_GenerarKeySource);
         btnGeneracionKeySource.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                  Log.i(this.getClass().getName(), "---Iniciando Proceso de Desencripcion---");
+            @Override
+            public void onClick(View v) {
+                Log.i(this.getClass().getName(), "---Iniciando Proceso Generacion de KeySource---");
 
-                  String codR = ((EditText) findViewById(R.id.editTxt_OTP)).getText().toString(); //SMS
+                String codR = ((EditText) findViewById(R.id.editTxt_OTP)).getText().toString(); //SMS
+                String numeroCelular = ((EditText) findViewById(R.id.editTxt_NumeroCel)).getText().toString();
 
-                  byte[] sha512CodR = DigestUtils.sha512(codR);
-                  Log.i(this.getClass().getName(), "byte[] sha512CodR:" + sha512CodR.length);
-                  Log.i(this.getClass().getName(), "sha512CodR: "+sha512CodR);
+                Log.i(this.getClass().getName(), "CodR: " + codR);
+                Log.i(this.getClass().getName(), "numeroCelular: " + numeroCelular);
+                Log.i(this.getClass().getName(), "idHardware: " + idH.toString());
 
-                  //String sha512HexCodR = new String(Hex.encodeHex(sha512CodR));
-                  //Log.i(this.getClass().getName(), "sha512HexCodR:");
-                  //Log.i(this.getClass().getName(), sha512HexCodR);
+                byte[] sha512CodR = DigestUtils.sha512(codR);
 
-                  String numeroCelular = ((EditText) findViewById(R.id.editTxt_NumeroCel)).getText().toString();
+                //Concatenando cadenas
+                StringBuilder sha512CodRIdHNumCel = new StringBuilder();
+                sha512CodRIdHNumCel.append(sha512CodR).append(idH.toString()).append(numeroCelular);
 
-                  //Concatenando Bytes
-                  byte[] concatSha512CodRIdHNumCel = new byte[sha512CodR.length + idH.toString().getBytes().length + numeroCelular.getBytes().length];
-                  System.arraycopy(sha512CodR, 0, concatSha512CodRIdHNumCel, 0, sha512CodR.length);
-                  System.arraycopy(idH.toString().getBytes(), 0, concatSha512CodRIdHNumCel, sha512CodR.length, idH.toString().getBytes().length);
-                  System.arraycopy(numeroCelular.getBytes(), 0, concatSha512CodRIdHNumCel, sha512CodR.length+idH.toString().getBytes().length, numeroCelular.getBytes().length);
+                Log.i(this.getClass().getName(), "sha512CodRIdHNumCel:" + sha512CodRIdHNumCel.toString());
 
-                  Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel leng: "+ concatSha512CodRIdHNumCel.length);
-                  Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel:" + concatSha512CodRIdHNumCel.toString());
-                  Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel:" + new String(Base64.encodeBase64(concatSha512CodRIdHNumCel)));
+                byte[] keySourceSinHex = DigestUtils.sha512(sha512CodRIdHNumCel.toString());
 
-                  //Proceso sin Hex
-                  //StringBuilder sha512CodR_idH_Nc = new StringBuilder();
-                  //sha512CodR_idH_Nc.append(sha512CodR).append(idH).append(numeroCelular);
-                  //Log.i(this.getClass().getName(), "Cadena concatenada de 'Sha512( codR ) || idH || nc':");
-                  //Log.i(this.getClass().getName(), sha512CodR_idH_Nc.toString());
+                //String sha512HexCodR = new String(Hex.encodeHex(sha512CodR));
+                //Log.i(this.getClass().getName(), "sha512HexCodR:");
+                //Log.i(this.getClass().getName(), sha512HexCodR);
 
-                  //StringBuilder sha512HexCodR_idH_Nc = new StringBuilder();
-                  //sha512HexCodR_idH_Nc.append(sha512HexCodR).append(idH).append(numeroCelular);
-                  //Log.i(this.getClass().getName(), "Cadena concatenada de 'Sha512Hex( codR ) || idH || nc':");
-                  //Log.i(this.getClass().getName(), sha512HexCodR_idH_Nc.toString());
+                //Concatenando Bytes
+                //byte[] concatSha512CodRIdHNumCel = new byte[sha512CodR.length + idH.toString().getBytes().length + numeroCelular.getBytes().length];
+                //System.arraycopy(sha512CodR, 0, concatSha512CodRIdHNumCel, 0, sha512CodR.length);
+                //System.arraycopy(idH.toString().getBytes(), 0, concatSha512CodRIdHNumCel, sha512CodR.length, idH.toString().getBytes().length);
+                //System.arraycopy(numeroCelular.getBytes(), 0, concatSha512CodRIdHNumCel, sha512CodR.length + idH.toString().getBytes().length, numeroCelular.getBytes().length);
 
-                  //Proceso sin Hex
-                  //keySource = Sha512( Sha512( codR ) || idH || nc )
-                  byte[] keySourceSinHex = DigestUtils.sha512(concatSha512CodRIdHNumCel);
-                  Log.i(this.getClass().getName(), "keySourceSinHex leng: "+ keySourceSinHex.length);
-                  Log.i(this.getClass().getName(), "keySourceSinHex:" + keySourceSinHex.toString());
-                  Log.i(this.getClass().getName(), "keySourceSinHex:" + new String(Base64.encodeBase64(keySourceSinHex)));
+                //Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel leng: " + concatSha512CodRIdHNumCel.length);
+                //Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel:" + concatSha512CodRIdHNumCel.toString());
+                //Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel:" + new String(Base64.encodeBase64(concatSha512CodRIdHNumCel)));
 
-                  keySource = keySourceSinHex;
-                  //editTxt_Keysource
-                  ((EditText) findViewById(R.id.editTxt_Keysource)).setText(new String(Base64.encodeBase64(keySourceSinHex)));
-              }
+                //Proceso sin Hex
+                //StringBuilder sha512CodR_idH_Nc = new StringBuilder();
+                //sha512CodR_idH_Nc.append(sha512CodR).append(idH).append(numeroCelular);
+                //Log.i(this.getClass().getName(), "Cadena concatenada de 'Sha512( codR ) || idH || nc':");
+                //Log.i(this.getClass().getName(), sha512CodR_idH_Nc.toString());
+
+                //StringBuilder sha512HexCodR_idH_Nc = new StringBuilder();
+                //sha512HexCodR_idH_Nc.append(sha512HexCodR).append(idH).append(numeroCelular);
+                //Log.i(this.getClass().getName(), "Cadena concatenada de 'Sha512Hex( codR ) || idH || nc':");
+                //Log.i(this.getClass().getName(), sha512HexCodR_idH_Nc.toString());
+
+                //Proceso sin Hex
+                //keySource = Sha512( Sha512( codR ) || idH || nc )
+                //byte[] keySourceSinHex = DigestUtils.sha512(concatSha512CodRIdHNumCel);
+                Log.i(this.getClass().getName(), "keySourceSinHex leng: " + keySourceSinHex.length);
+                Log.i(this.getClass().getName(), "keySourceSinHex:" + keySourceSinHex.toString());
+                Log.i(this.getClass().getName(), "keySourceSinHex:" + new String(keySourceSinHex));
+
+                keySource = keySourceSinHex;
+                //editTxt_Keysource
+                ((EditText) findViewById(R.id.editTxt_Keysource)).setText(new String(keySourceSinHex));
+            }
         });
 
 //Proceso de Desencripcion de cGoogleID
         Button btnDecryptCgoogleID = (Button) findViewById(R.id.bttn_DecryptCgoogleID);
-        btnDecryptCgoogleID.setOnClickListener(new View.OnClickListener(){
+        btnDecryptCgoogleID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(this.getClass().getName(), "keySource leng: "+ keySource.length);
+                Log.i(this.getClass().getName(), "---Iniciando Desencripcion de cGoogleID---");
+
+                Log.i(this.getClass().getName(), "keySource leng: " + keySource.length);
 
                 //Bytes 0 al 15  Clave de 16 bytes para el algoritmo AES-128.
                 byte[] key = new byte[16];
@@ -157,8 +168,8 @@ public class Codi extends AppCompatActivity {
 
                 String cGoogleID = ((EditText) findViewById(R.id.editTxt_IdGoogle_Firebase)).getText().toString(); //id encriptado de Google enviado por Banxico
 
-                Log.i(this.getClass().getName(), "key: "+ key.length);
-                Log.i(this.getClass().getName(), "vectorInicialización: "+ vectorInicialización.length);
+                Log.i(this.getClass().getName(), "key: " + key.length);
+                Log.i(this.getClass().getName(), "vectorInicialización: " + vectorInicialización.length);
                 String cGoogleIdDesencriptado = null;
                 try {
                     AES_CBC_128 aes_cbc_128 = new AES_CBC_128();
@@ -201,7 +212,7 @@ public class Codi extends AppCompatActivity {
                     String androidId = "195fdf0d6ce64575";//Dato Obtenido al registrar la app en FireBase
                     setInicializaAppSecundaria(cGoogleID, androidId);
                     new Token2().execute(cGoogleID);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 Toast.makeText(Codi.this, "Notificacion 2", Toast.LENGTH_SHORT).show();
@@ -249,7 +260,7 @@ public class Codi extends AppCompatActivity {
                             sha256_HMAC.init(secretKey);
 
                             byte[] previo = sha256_HMAC.doFinal(ncDvIdN.toString().getBytes());
-                            Log.i(this.getClass().getName(), "previo leng: "+previo.length);
+                            Log.i(this.getClass().getName(), "previo leng: " + previo.length);
 
                             Log.i(this.getClass().getName(), "previo:");
                             Log.i(this.getClass().getName(), new String(previo));
@@ -290,6 +301,7 @@ public class Codi extends AppCompatActivity {
 
     /**
      * Metodo para registrar la app en google firebase
+     *
      * @param cGoogleID Dato recivido de Banxico en el registro inicial
      * @param androidId Identificador del dispositivo
      */
@@ -299,28 +311,28 @@ public class Codi extends AppCompatActivity {
         //“1:cGoogleID:androidID:”
 
         StringBuilder applicationId = new StringBuilder("1:").append(cGoogleID).append(":android:").append(androidId);
-        Log.i(this.getClass().getName(), "applicationId: "+applicationId.toString());
+        Log.i(this.getClass().getName(), "applicationId: " + applicationId.toString());
 
         FirebaseOptions.Builder firebaseOptions = new FirebaseOptions.Builder().setApplicationId(applicationId.toString());
 
         boolean haSidoInicializado = false;
-        FirebaseApp myApp =  null;
+        FirebaseApp myApp = null;
 
         List<FirebaseApp> lstFirebaseApps = FirebaseApp.getApps(this);
-        for(FirebaseApp app : lstFirebaseApps){
-            Log.i(this.getClass().getName(), "app.getName(): "+app.getName());
-            Log.i(this.getClass().getName(), "FirebaseApp.DEFAULT_APP_NAME: "+FirebaseApp.DEFAULT_APP_NAME);
-            if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)){
+        for (FirebaseApp app : lstFirebaseApps) {
+            Log.i(this.getClass().getName(), "app.getName(): " + app.getName());
+            Log.i(this.getClass().getName(), "FirebaseApp.DEFAULT_APP_NAME: " + FirebaseApp.DEFAULT_APP_NAME);
+            if (app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
                 haSidoInicializado = true;
                 myApp = app;
-                Log.i(this.getClass().getName(), "Inicializado myApp: "+myApp);
+                Log.i(this.getClass().getName(), "Inicializado myApp: " + myApp);
             }
         }
-        Log.i(this.getClass().getName(), "haSidoInicializado: "+haSidoInicializado);
+        Log.i(this.getClass().getName(), "haSidoInicializado: " + haSidoInicializado);
 
-        if(!haSidoInicializado){
+        if (!haSidoInicializado) {
             myApp = FirebaseApp.initializeApp(this, firebaseOptions.build());
-            Log.i(this.getClass().getName(), "No Inicializado myApp2: "+myApp);
+            Log.i(this.getClass().getName(), "No Inicializado myApp2: " + myApp);
         }
     }
 
@@ -332,12 +344,12 @@ public class Codi extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             String token = null;
             try {
-                Log.i(this.getClass().getName(), "parametro: "+ params[0]);
+                Log.i(this.getClass().getName(), "parametro: " + params[0]);
                 token = FirebaseInstanceId.getInstance().getToken(params[0], FirebaseMessaging.INSTANCE_ID_SCOPE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.i(this.getClass().getName(), "token: "+ token);
+            Log.i(this.getClass().getName(), "token: " + token);
 
             return null;
         }

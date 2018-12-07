@@ -40,7 +40,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.i(this.getClass().getName(), "title: "+ title);
         Log.i(this.getClass().getName(), "body: "+ body);
-        /*
+
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         NotificationCompat.Builder notificacionBuilder = new NotificationCompat.Builder(this);
         //notificacionBuilder.setSmallIcon(R.drawable.)
@@ -55,7 +55,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notificacionBuilder.build());
-        */
+
     }
 
 }
