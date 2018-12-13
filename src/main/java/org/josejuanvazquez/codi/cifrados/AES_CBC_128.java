@@ -47,14 +47,14 @@ public class AES_CBC_128 {
     public String decrypt(byte[]  key, byte[]  iv, String encrypted) throws Exception {
         Log.i(this.getClass().getName(), "Desencriptar: "+ encrypted);
         Log.i(this.getClass().getName(), "Desencriptar bytes: "+ encrypted.getBytes());
-        Log.i(this.getClass().getName(), "Desencriptar bytes: "+ decodeBase64(encrypted));
+        Log.i(this.getClass().getName(), "Desencriptar decodeBase64 bytes: "+ decodeBase64(encrypted));
 
         SecretKeySpec skeySpec = new SecretKeySpec(key, alg);
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
         Cipher cipher = Cipher.getInstance(cI);
         cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
 
-        byte[] enc = decodeBase64(encrypted);//encrypted.getBytes();
+        byte[] enc = encrypted.getBytes();//decodeBase64(encrypted);//
         Log.i(this.getClass().getName(), "enc: "+ enc.length);
         //Notas
         // Usando encrypted.getBytes() se genera cadena de 32 bytes, decir,

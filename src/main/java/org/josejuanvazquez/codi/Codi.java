@@ -15,13 +15,15 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.josejuanvazquez.codi.cifrados.AES_CBC_128;
 import org.josejuanvazquez.codi.servicios.ConexionServicios;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
-
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 
 import javax.crypto.Mac;
@@ -63,11 +65,11 @@ public class Codi extends AppCompatActivity {
                     public void run() {
                         try {
                             StringBuilder json = new StringBuilder();
-                            json.append("d={\"numeroCelular\":\"");
+                            json.append("d={\"nc\":\"");
                             json.append(((EditText) findViewById(R.id.editTxt_NumeroCel)).getText());
-                            json.append("\",\"idHardware\":\"");
+                            json.append("\",\"idH\":\"");
                             json.append(idH.toString());
-                            json.append("\",\"informacionAdicional\":{\"so\":\"Android\",\"versionSO\":\"7 Nougat\",\"fabricante\":\"HTC\",\"modelo\":\"HTC 10\"}}");
+                            json.append("\",\"ia\":{\"so\":\"Android\",\"vSO\":\"7 Nougat\",\"fab\":\"HTC\",\"mod\":\"HTC 10\"}}");
 
                             String respuesta = new ConexionServicios().llamarServicio("https://www.banxico.org.mx/pagospei-beta/registroInicial", json.toString());
 
@@ -102,50 +104,31 @@ public class Codi extends AppCompatActivity {
                 Log.i(this.getClass().getName(), "idHardware: " + idH.toString());
 
                 byte[] sha512CodR = DigestUtils.sha512(codR);
+                String sha512CodRHexa = new String(Hex.encodeHex(sha512CodR));//Asi se muestra en cadena Hexadecimal
+
+                Log.i(this.getClass().getName(), "sha512CodR tamaño: " + sha512CodR.length);
+                Log.i(this.getClass().getName(), "sha512CodR Hexa:" + sha512CodRHexa);
+
+                /* Formas errones a de convertir a texto (Mal)
+                new String(sha512CodR));
+                Base64.encodeBase64(sha512CodR));
+                new String(Base64.encodeBase64(sha512CodR)));
+                android.util.Base64.encode(sha512CodR, android.util.Base64.DEFAULT));
+                */
 
                 //Concatenando cadenas
-                StringBuilder sha512CodRIdHNumCel = new StringBuilder();
-                sha512CodRIdHNumCel.append(sha512CodR).append(idH.toString()).append(numeroCelular);
+                StringBuilder sha512CodRIdHNumCelString = new StringBuilder();
+                sha512CodRIdHNumCelString.append(sha512CodRHexa).append(idH.toString()).append(numeroCelular);
 
-                Log.i(this.getClass().getName(), "sha512CodRIdHNumCel:" + sha512CodRIdHNumCel.toString());
+                Log.i(this.getClass().getName(), "Concatencacion: " + sha512CodRIdHNumCelString.toString());
 
-                byte[] keySourceSinHex = DigestUtils.sha512(sha512CodRIdHNumCel.toString());
+                keySource = DigestUtils.sha512(sha512CodRIdHNumCelString.toString());
+                String keySourceHexa = new String(Hex.encodeHex(keySource));//Asi se muestra en cadena Hexadecimal de keySource
+                Log.i(this.getClass().getName(), "keySource tamaño: " + keySource.length);
+                Log.i(this.getClass().getName(), "keySourceHexa:" + keySourceHexa);
 
-                //String sha512HexCodR = new String(Hex.encodeHex(sha512CodR));
-                //Log.i(this.getClass().getName(), "sha512HexCodR:");
-                //Log.i(this.getClass().getName(), sha512HexCodR);
-
-                //Concatenando Bytes
-                //byte[] concatSha512CodRIdHNumCel = new byte[sha512CodR.length + idH.toString().getBytes().length + numeroCelular.getBytes().length];
-                //System.arraycopy(sha512CodR, 0, concatSha512CodRIdHNumCel, 0, sha512CodR.length);
-                //System.arraycopy(idH.toString().getBytes(), 0, concatSha512CodRIdHNumCel, sha512CodR.length, idH.toString().getBytes().length);
-                //System.arraycopy(numeroCelular.getBytes(), 0, concatSha512CodRIdHNumCel, sha512CodR.length + idH.toString().getBytes().length, numeroCelular.getBytes().length);
-
-                //Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel leng: " + concatSha512CodRIdHNumCel.length);
-                //Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel:" + concatSha512CodRIdHNumCel.toString());
-                //Log.i(this.getClass().getName(), "concatSha512CodRIdHNumCel:" + new String(Base64.encodeBase64(concatSha512CodRIdHNumCel)));
-
-                //Proceso sin Hex
-                //StringBuilder sha512CodR_idH_Nc = new StringBuilder();
-                //sha512CodR_idH_Nc.append(sha512CodR).append(idH).append(numeroCelular);
-                //Log.i(this.getClass().getName(), "Cadena concatenada de 'Sha512( codR ) || idH || nc':");
-                //Log.i(this.getClass().getName(), sha512CodR_idH_Nc.toString());
-
-                //StringBuilder sha512HexCodR_idH_Nc = new StringBuilder();
-                //sha512HexCodR_idH_Nc.append(sha512HexCodR).append(idH).append(numeroCelular);
-                //Log.i(this.getClass().getName(), "Cadena concatenada de 'Sha512Hex( codR ) || idH || nc':");
-                //Log.i(this.getClass().getName(), sha512HexCodR_idH_Nc.toString());
-
-                //Proceso sin Hex
-                //keySource = Sha512( Sha512( codR ) || idH || nc )
-                //byte[] keySourceSinHex = DigestUtils.sha512(concatSha512CodRIdHNumCel);
-                Log.i(this.getClass().getName(), "keySourceSinHex leng: " + keySourceSinHex.length);
-                Log.i(this.getClass().getName(), "keySourceSinHex:" + keySourceSinHex.toString());
-                Log.i(this.getClass().getName(), "keySourceSinHex:" + new String(keySourceSinHex));
-
-                keySource = keySourceSinHex;
                 //editTxt_Keysource
-                ((EditText) findViewById(R.id.editTxt_Keysource)).setText(new String(keySourceSinHex));
+                ((EditText) findViewById(R.id.editTxt_Keysource)).setText(keySourceHexa);
             }
         });
 
@@ -158,23 +141,31 @@ public class Codi extends AppCompatActivity {
 
                 Log.i(this.getClass().getName(), "keySource leng: " + keySource.length);
 
-                //Bytes 0 al 15  Clave de 16 bytes para el algoritmo AES-128.
+                //Copiando 1ros 16 bytes
                 byte[] key = new byte[16];
                 System.arraycopy(keySource, 0, key, 0, 16);
+                String heyHexa = new String(Hex.encodeHex(key));
+                Log.i(this.getClass().getName(), "key tamaño: " + key.length);
+                Log.i(this.getClass().getName(), "heyHexa Hexa:" + heyHexa);
 
-                //Bytes 16 al 31  Arreglo de 16 bytes como vector de inicialización para el modo
-                byte[] vectorInicialización = new byte[16];
-                System.arraycopy(keySource, 15, vectorInicialización, 0, 16);
+                //Copiando 2dos 16 bytes
+                byte[] vectorInicializacion = new byte[16];
+                System.arraycopy(keySource, 16, vectorInicializacion,0, 16);
+                String vectorInicializacionHexa = new String(Hex.encodeHex(vectorInicializacion));
+                Log.i(this.getClass().getName(), "vectorInicializacion tamaño: " + vectorInicializacion.length);
+                Log.i(this.getClass().getName(), "vectorInicializacionHexaHexa Hexa:" + vectorInicializacionHexa);
+
+                //Nota: El gId esta expresadp en Hexadecimal, es decir es una cadena de 32 caracteres
+                //Si estuviera en Base64 seria una cadena de 24 caracteres
 
                 String cGoogleID = ((EditText) findViewById(R.id.editTxt_IdGoogle_Firebase)).getText().toString(); //id encriptado de Google enviado por Banxico
 
-                Log.i(this.getClass().getName(), "key: " + key.length);
-                Log.i(this.getClass().getName(), "vectorInicialización: " + vectorInicialización.length);
                 String cGoogleIdDesencriptado = null;
                 try {
                     AES_CBC_128 aes_cbc_128 = new AES_CBC_128();
 //Inicio de Ejemplo
-/*
+                    /*
+                    Log.i(this.getClass().getName(), "Incio de prueba de desencipcion");
                     String llave = "92AE31A79FEEB2A3"; //llave
                     String iv = "0123456789ABCDEF"; // vector de inicialización
                     String cleartext = "hola";
@@ -192,11 +183,12 @@ public class Codi extends AppCompatActivity {
                     String desencriptado = aes_cbc_128.decrypt(llaveArray,ivArray,encriptado );
 
                     Log.i(this.getClass().getName(), "desencriptado: "+ desencriptado);
-*/
+                    Log.i(this.getClass().getName(), "Fin de prueba de desencipcion");
+                    */
 //Fin de Ejemplo
 
 //Solicitud de desencripcion
-                    cGoogleIdDesencriptado = aes_cbc_128.decrypt(key, vectorInicialización, cGoogleID);
+                    cGoogleIdDesencriptado = aes_cbc_128.decrypt(key, vectorInicializacion, cGoogleID);
                     Log.i(this.getClass().getName(), "cGoogleIdDesencriptado: "+ cGoogleIdDesencriptado);
                 } catch (Exception e) {
                     e.printStackTrace();
