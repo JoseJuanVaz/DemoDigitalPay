@@ -205,14 +205,13 @@ public class Codi extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    String cGoogleID = "642578255008";//((EditText) findViewById(R.id.editTxt_IdGoogle_Firebase)).getText().toString(); //id encriptado de Google enviado por Banxico
-                    String androidId = "195fdf0d6ce64575";//Dato Obtenido al registrar la app en FireBase
+                    String cGoogleID = ((EditText) findViewById(R.id.editTxt_IdGoogle_Firebase)).getText().toString(); //id encriptado de Google enviado por Banxico
+                    String androidId = "195fdf0d6ce64575";//Dato Obtenido al registrar la app en FireBase, consultar consola de Firebase
                     setInicializaAppSecundaria(cGoogleID, androidId);
                     new Token2().execute(cGoogleID);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(Codi.this, "Notificacion 2", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -343,6 +342,9 @@ public class Codi extends AppCompatActivity {
             try {
                 Log.i(this.getClass().getName(), "parametro: " + params[0]);
                 token = FirebaseInstanceId.getInstance().getToken(params[0], FirebaseMessaging.INSTANCE_ID_SCOPE);
+
+                EditText editTxt_TokenRegistroFirebase = (EditText) findViewById(R.id.editTxt_TokenRegFirebase);
+                editTxt_TokenRegistroFirebase.setText(token);
             } catch (IOException e) {
                 e.printStackTrace();
             }

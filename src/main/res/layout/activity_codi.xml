@@ -142,6 +142,12 @@
                 android:layout_height="wrap_content"
                 android:text="Desencriptar cGoogleID" />
 
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="cGoogleID Desencriptado (Identificador de Google (gId))" />
+
             <EditText
                 android:id="@+id/editTxt_DecryptCgoogleID"
                 android:layout_width="match_parent"
@@ -149,6 +155,26 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:text="cGoogleID Desencriptado" />
+
+            <Button
+                android:id="@+id/bttn_RegFirebase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Registrar en Firebase" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Token de Registro Firebase:" />
+
+            <EditText
+                android:id="@+id/editTxt_TokenRegFirebase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Token de Registro Firebase" />
 
             <TextView
                 android:id="@+id/textView8"
@@ -163,12 +189,6 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:text="Digito Verificador" />
-
-            <Button
-                android:id="@+id/bttn_RegFirebase"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Registrar en Firebase" />
 
             <TextView
                 android:id="@+id/txtVw_HmacRegSubsDisp"
